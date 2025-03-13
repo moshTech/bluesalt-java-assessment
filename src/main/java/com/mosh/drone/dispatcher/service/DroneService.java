@@ -40,12 +40,14 @@ public class DroneService {
   public GenericMessageResponse getDroneBatteryCapacity(String droneId) {
 
     var genericMessageResponse = new GenericMessageResponse();
-    int  bateryCapacity = droneRepository
-        .findById(droneId)
-        .orElseThrow(() -> ExceptionOf.Business.NotFound.NOT_FOUND.exception("Drone not found"))
-        .getBatteryCapacity();
 
-    genericMessageResponse.setMessage(String.valueOf(bateryCapacity).concat(" %"));
+    int batteryCapacity =
+        droneRepository
+            .findById(droneId)
+            .orElseThrow(() -> ExceptionOf.Business.NotFound.NOT_FOUND.exception("Drone not found"))
+            .getBatteryCapacity();
+
+    genericMessageResponse.setMessage(String.valueOf(batteryCapacity).concat(" %"));
 
     return genericMessageResponse;
   }

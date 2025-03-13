@@ -1,5 +1,6 @@
 package com.mosh.drone.dispatcher.service;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -7,13 +8,16 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.mosh.drone.dispatcher.exception.ExceptionOf;
 import com.mosh.drone.dispatcher.mapper.DroneMapper;
 import com.mosh.drone.dispatcher.model.entity.Drone;
 import com.mosh.drone.dispatcher.model.enumeration.DroneModel;
 import com.mosh.drone.dispatcher.model.enumeration.DroneState;
 import com.mosh.drone.dispatcher.model.response.DroneResponse;
+import com.mosh.drone.dispatcher.model.response.GenericMessageResponse;
 import com.mosh.drone.dispatcher.repository.DroneRepository;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -109,5 +113,35 @@ public class DroneServiceTest {
     verify(droneRepository, times(1))
         .findByStateAndBatteryCapacityGreaterThanEqual(DroneState.IDLE, 30, pageable);
     verify(droneMapper, times(2)).toDroneResponse(any(Drone.class));
+  }
+
+  @Test
+  void getDroneBatteryCapacity_ShouldReturnCorrectValue_WhenDroneExists() {
+    // Arrange
+
+    when(droneRepository.findById(drone1.getId())).thenReturn(Optional.of(drone1));
+
+    // Act
+    GenericMessageResponse response = droneService.getDroneBatteryCapacity(drone1.getId());
+
+    // Assert
+    assertNotNull(response);
+    assertEquals("50 %", response.getMessage());
+
+    verify(droneRepository, times(1)).findById(drone1.getId());
+  }
+
+  @Test
+  void getDroneBatteryCapacity_ShouldThrowNotFoundException_WhenDroneDoesNotExist() {
+    // Arrange
+    String droneId = "InvalidId";
+
+    when(droneRepository.findById(droneId)).thenReturn(Optional.empty());
+
+    assertThrows(
+        ExceptionOf.Business.NotFound.NOT_FOUND.exception().getClass(),
+        () -> droneService.getDroneBatteryCapacity(droneId));
+
+    verify(droneRepository, times(1)).findById(droneId);
   }
 }

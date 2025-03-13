@@ -8,10 +8,12 @@ import com.mosh.drone.dispatcher.model.entity.Drone;
 import com.mosh.drone.dispatcher.model.enumeration.DroneModel;
 import com.mosh.drone.dispatcher.model.enumeration.DroneState;
 import com.mosh.drone.dispatcher.model.response.DroneResponse;
+import com.mosh.drone.dispatcher.model.response.GenericMessageResponse;
 import com.mosh.drone.dispatcher.repository.DroneRepository;
 import com.mosh.drone.dispatcher.util.ClientUtil;
 import com.mosh.drone.dispatcher.util.RestPage;
 import java.util.List;
+import java.util.Objects;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +49,7 @@ public class DroneControllerIT {
     drone1 = new Drone();
     drone1.setModel(DroneModel.LIGHTWEIGHT);
     drone1.setState(DroneState.IDLE);
-    drone1.setSerialNumber("D001");
+    drone1.setSerialNumber("D003");
     drone1.setWeightLimit(300.5);
     drone1.setBatteryCapacity(50);
 
@@ -55,7 +57,7 @@ public class DroneControllerIT {
 
     drone2.setModel(DroneModel.MIDDLEWEIGHT);
     drone2.setState(DroneState.IDLE);
-    drone2.setSerialNumber("D002");
+    drone2.setSerialNumber("D004");
     drone2.setWeightLimit(499.98);
     drone2.setBatteryCapacity(70);
 
@@ -81,5 +83,36 @@ public class DroneControllerIT {
     assertThat(droneResponse.getSize()).isPositive();
 
     assertThat(droneResponse.stream()).anyMatch(drone -> drone.getSerialNumber().equals("D001"));
+  }
+
+  @Test
+  void testGetBatteryCapacityByDroneId_success() {
+
+    var response =
+        restTemplate.exchange(
+            "/api/v1/drone/" + drone1.getId() + "/battery",
+            HttpMethod.GET,
+            null,
+            GenericMessageResponse.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    assertThat(response.getBody()).isNotNull();
+    var genericMessageResponse = Objects.requireNonNull(response.getBody());
+
+    assertThat(genericMessageResponse.getMessage()).isEqualTo("50 %");
+  }
+
+  @Test
+  void testGetBatteryCapacityByDroneId_Throw404() {
+
+    var response =
+        restTemplate.exchange(
+            "/api/v1/drone/" + "InvalidId" + "/battery",
+            HttpMethod.GET,
+            null,
+            GenericMessageResponse.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 }
