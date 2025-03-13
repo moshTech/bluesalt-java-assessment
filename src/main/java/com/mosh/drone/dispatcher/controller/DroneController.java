@@ -1,5 +1,7 @@
 package com.mosh.drone.dispatcher.controller;
 
+import com.mosh.drone.dispatcher.facade.DroneFacade;
+import com.mosh.drone.dispatcher.model.request.LoadDroneRequest;
 import com.mosh.drone.dispatcher.model.request.RegisterDroneRequest;
 import com.mosh.drone.dispatcher.model.response.DroneResponse;
 import com.mosh.drone.dispatcher.model.response.GenericMessageResponse;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/drone")
 public class DroneController {
 
+  private final DroneFacade droneFacade;
   private final DroneService droneService;
 
   @GetMapping("/available")
@@ -50,5 +53,18 @@ public class DroneController {
   @Operation(summary = "Register a drone", description = "To register a drone")
   public DroneResponse register(@RequestBody @Valid RegisterDroneRequest request) {
     return droneService.registerDrone(request);
+  }
+
+  @PostMapping("/{id}/load")
+  @Operation(summary = "Load drone with medication", description = "To load drone with medication")
+  public GenericMessageResponse loadDrone(@PathVariable String id, @RequestBody LoadDroneRequest request) {
+    return droneFacade.loadDrone(id, request);
+  }
+
+  @GetMapping("/loaded/{id}")
+  @Operation(summary = "Get loaded drone by id", description = "To fetch loaded drone by id with its medications")
+  public DroneResponse getLoadedDroneById(
+          @PathVariable String id) {
+    return droneService.getLoadedDroneWithMedications(id);
   }
 }

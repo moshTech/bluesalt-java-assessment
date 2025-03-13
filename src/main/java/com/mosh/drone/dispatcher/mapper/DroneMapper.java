@@ -18,6 +18,14 @@ public class DroneMapper {
   public DroneResponse toDroneResponse(Drone drone) {
     DroneResponse droneResponse = new DroneResponse();
     BeanUtils.copyProperties(drone, droneResponse);
+    droneResponse.setMedications(null);
+
+    return droneResponse;
+  }
+
+  public DroneResponse toDroneResponseWithMedication(Drone drone) {
+    DroneResponse droneResponse = new DroneResponse();
+    BeanUtils.copyProperties(drone, droneResponse);
 
     return droneResponse;
   }

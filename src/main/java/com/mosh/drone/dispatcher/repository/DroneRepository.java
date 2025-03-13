@@ -10,6 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
  * @author mosh
  * @role software engineer
@@ -20,6 +23,8 @@ public interface DroneRepository extends JpaRepository<Drone, String> {
 
   Page<Drone> findByStateAndBatteryCapacityGreaterThanEqual(
       DroneState state, int battery, Pageable pageable);
+
+  Optional<Drone> findByIdAndStateIn(String id, List<DroneState> droneStates);
 
   boolean existsBySerialNumber(String serialNumber);
 
