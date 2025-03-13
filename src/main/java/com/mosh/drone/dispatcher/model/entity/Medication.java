@@ -27,17 +27,17 @@ import org.hibernate.annotations.Where;
 @SQLDelete(sql = "update medication set deleted = true where id=?")
 public class Medication extends BaseEntity {
 
-    @Column(nullable = false)
-    private String name;
+  @Column(nullable = false)
+  private String name;
 
-    private double weight;
+  private double weight;
 
-    @Column(nullable = false, unique = true)
-    private String code;
+  @Column(nullable = false, unique = true)
+  private String code;
 
-    private String image;
+  private String image;
 
-    @ManyToOne
-    @JoinColumn(name = "drone_id")
-    private Drone drone;
+  @ManyToOne
+  @JoinColumn(name = "drone_id")
+  private Drone drone;
 }

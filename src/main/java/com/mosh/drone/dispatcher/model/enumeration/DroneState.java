@@ -6,6 +6,10 @@ package com.mosh.drone.dispatcher.model.enumeration;
  * @createdOn 13 Thu Mar, 2025
  */
 public enum DroneState {
-
-    IDLE, LOADING, LOADED, DELIVERING, DELIVERED, RETURNING
+  IDLE,
+  LOADING,
+  LOADED,
+  DELIVERING,
+  DELIVERED,
+  RETURNING
 }

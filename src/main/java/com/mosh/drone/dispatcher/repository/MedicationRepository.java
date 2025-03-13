@@ -9,7 +9,5 @@ import org.springframework.stereotype.Repository;
  * @role software engineer
  * @createdOn 13 Thu Mar, 2025
  */
-
 @Repository
-public interface MedicationRepository extends JpaRepository<Medication, String> {
-}
+public interface MedicationRepository extends JpaRepository<Medication, String> {}
