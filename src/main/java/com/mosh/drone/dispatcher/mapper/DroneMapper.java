@@ -1,6 +1,8 @@
 package com.mosh.drone.dispatcher.mapper;
 
 import com.mosh.drone.dispatcher.model.entity.Drone;
+import com.mosh.drone.dispatcher.model.enumeration.DroneState;
+import com.mosh.drone.dispatcher.model.request.RegisterDroneRequest;
 import com.mosh.drone.dispatcher.model.response.DroneResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
@@ -18,5 +20,13 @@ public class DroneMapper {
     BeanUtils.copyProperties(drone, droneResponse);
 
     return droneResponse;
+  }
+
+  public Drone toDrone(RegisterDroneRequest request) {
+    Drone drone = new Drone();
+    BeanUtils.copyProperties(request, drone);
+    drone.setState(DroneState.IDLE);
+
+    return drone;
   }
 }

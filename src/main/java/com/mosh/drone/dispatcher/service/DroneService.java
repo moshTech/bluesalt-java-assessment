@@ -3,6 +3,7 @@ package com.mosh.drone.dispatcher.service;
 import com.mosh.drone.dispatcher.exception.ExceptionOf;
 import com.mosh.drone.dispatcher.mapper.DroneMapper;
 import com.mosh.drone.dispatcher.model.enumeration.DroneState;
+import com.mosh.drone.dispatcher.model.request.RegisterDroneRequest;
 import com.mosh.drone.dispatcher.model.response.DroneResponse;
 import com.mosh.drone.dispatcher.model.response.GenericMessageResponse;
 import com.mosh.drone.dispatcher.repository.DroneRepository;
@@ -33,7 +34,7 @@ public class DroneService {
     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));
 
     return droneRepository
-        .findByStateAndBatteryCapacityGreaterThanEqual(DroneState.IDLE, 30, pageable)
+        .findByStateAndBatteryCapacityGreaterThanEqual(DroneState.IDLE, 25, pageable)
         .map(droneMapper::toDroneResponse);
   }
 
@@ -50,5 +51,15 @@ public class DroneService {
     genericMessageResponse.setMessage(String.valueOf(batteryCapacity).concat(" %"));
 
     return genericMessageResponse;
+  }
+
+  public DroneResponse registerDrone(RegisterDroneRequest request) {
+
+    if (droneRepository.existsBySerialNumber(request.getSerialNumber())) {
+      throw ExceptionOf.Business.BadRequest.BAD_REQUEST.exception(
+          "Drone already exist with the provided serial number");
+    }
+
+    return droneMapper.toDroneResponse(droneRepository.save(droneMapper.toDrone(request)));
   }
 }

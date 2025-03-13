@@ -7,6 +7,7 @@ import com.mosh.drone.dispatcher.mapper.DroneMapper;
 import com.mosh.drone.dispatcher.model.entity.Drone;
 import com.mosh.drone.dispatcher.model.enumeration.DroneModel;
 import com.mosh.drone.dispatcher.model.enumeration.DroneState;
+import com.mosh.drone.dispatcher.model.request.RegisterDroneRequest;
 import com.mosh.drone.dispatcher.model.response.DroneResponse;
 import com.mosh.drone.dispatcher.model.response.GenericMessageResponse;
 import com.mosh.drone.dispatcher.repository.DroneRepository;
@@ -15,6 +16,7 @@ import com.mosh.drone.dispatcher.util.RestPage;
 import java.util.List;
 import java.util.Objects;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +66,13 @@ public class DroneControllerIT {
     droneRepository.saveAll(List.of(drone1, drone2));
   }
 
+  @AfterEach
+  void cleanUp() {
+    droneRepository.deleteBySerialNumber("D003");
+    droneRepository.deleteBySerialNumber("D004");
+    droneRepository.deleteBySerialNumber("D005");
+  }
+
   @SneakyThrows
   @Test
   void getAvailableDrones() {
@@ -82,7 +91,7 @@ public class DroneControllerIT {
 
     assertThat(droneResponse.getSize()).isPositive();
 
-    assertThat(droneResponse.stream()).anyMatch(drone -> drone.getSerialNumber().equals("D001"));
+    assertThat(droneResponse.stream()).anyMatch(drone -> drone.getSerialNumber().equals("D003"));
   }
 
   @Test
@@ -114,5 +123,66 @@ public class DroneControllerIT {
             GenericMessageResponse.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  @Test
+  void testRegisterDrone_success() {
+
+    RegisterDroneRequest request = new RegisterDroneRequest();
+    request.setBatteryCapacity(60);
+    request.setModel(DroneModel.LIGHTWEIGHT);
+    request.setSerialNumber("D005");
+    request.setWeightLimit(400.6);
+
+    var response =
+        restTemplate.exchange(
+            "/api/v1/drone/register",
+            HttpMethod.POST,
+            new HttpEntity<>(request),
+            DroneResponse.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    assertThat(response.getBody()).isNotNull();
+    var droneResponse = response.getBody();
+
+    assertThat(droneResponse.getState()).isEqualTo(DroneState.IDLE);
+    assertThat(droneResponse.getModel()).isEqualTo(request.getModel());
+    assertThat(droneResponse.getWeightLimit()).isEqualTo(request.getWeightLimit());
+    assertThat(droneResponse.getBatteryCapacity()).isEqualTo(request.getBatteryCapacity());
+  }
+
+  @Test
+  void testRegisterDrone_InvalidWeightLimit() {
+
+    RegisterDroneRequest request = new RegisterDroneRequest();
+    request.setBatteryCapacity(60);
+    request.setModel(DroneModel.LIGHTWEIGHT);
+    request.setSerialNumber("D005");
+    request.setWeightLimit(500.6);
+
+    var response =
+        restTemplate.exchange(
+            "/api/v1/drone/register", HttpMethod.POST, new HttpEntity<>(request), String.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody()).contains("weightLimit cannot exceed 500g.");
+  }
+
+  @Test
+  void testRegisterDrone_InvalidBatteryCapacity() {
+
+    RegisterDroneRequest request = new RegisterDroneRequest();
+    request.setBatteryCapacity(200);
+    request.setModel(DroneModel.LIGHTWEIGHT);
+    request.setSerialNumber("D005");
+    request.setWeightLimit(300);
+
+    var response =
+        restTemplate.exchange(
+            "/api/v1/drone/register", HttpMethod.POST, new HttpEntity<>(request), String.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody()).contains("batteryCapacity should not be greater than 100 %");
   }
 }

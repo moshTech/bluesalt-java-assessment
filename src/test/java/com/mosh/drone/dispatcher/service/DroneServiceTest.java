@@ -4,6 +4,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,6 +14,7 @@ import com.mosh.drone.dispatcher.mapper.DroneMapper;
 import com.mosh.drone.dispatcher.model.entity.Drone;
 import com.mosh.drone.dispatcher.model.enumeration.DroneModel;
 import com.mosh.drone.dispatcher.model.enumeration.DroneState;
+import com.mosh.drone.dispatcher.model.request.RegisterDroneRequest;
 import com.mosh.drone.dispatcher.model.response.DroneResponse;
 import com.mosh.drone.dispatcher.model.response.GenericMessageResponse;
 import com.mosh.drone.dispatcher.repository.DroneRepository;
@@ -143,5 +145,71 @@ public class DroneServiceTest {
         () -> droneService.getDroneBatteryCapacity(droneId));
 
     verify(droneRepository, times(1)).findById(droneId);
+  }
+
+  @Test
+  void registerDrone_success() {
+    // Arrange
+    RegisterDroneRequest request = new RegisterDroneRequest();
+    request.setBatteryCapacity(60);
+    request.setModel(DroneModel.LIGHTWEIGHT);
+    request.setSerialNumber("0001234");
+    request.setWeightLimit(400.6);
+
+    Drone drone = new Drone();
+    drone.setState(DroneState.IDLE);
+    drone.setModel(DroneModel.LIGHTWEIGHT);
+    drone.setSerialNumber("0001234");
+    drone.setBatteryCapacity(60);
+    drone.setWeightLimit(400.6);
+
+    DroneResponse expectedResponse = new DroneResponse();
+    expectedResponse.setState(DroneState.IDLE);
+    expectedResponse.setModel(DroneModel.LIGHTWEIGHT);
+    expectedResponse.setSerialNumber("0001234");
+    expectedResponse.setBatteryCapacity(60);
+    expectedResponse.setWeightLimit(400.6);
+    expectedResponse.setId(drone.getId());
+
+    when(droneRepository.existsBySerialNumber(request.getSerialNumber())).thenReturn(false);
+    when(droneMapper.toDrone(request)).thenReturn(drone);
+    when(droneRepository.save(drone)).thenReturn(drone);
+    when(droneMapper.toDroneResponse(drone)).thenReturn(expectedResponse);
+
+    // Act
+    DroneResponse actualResponse = droneService.registerDrone(request);
+
+    // Assert
+    assertNotNull(actualResponse);
+    assertEquals(expectedResponse.getSerialNumber(), actualResponse.getSerialNumber());
+    assertEquals(expectedResponse.getBatteryCapacity(), actualResponse.getBatteryCapacity());
+    assertEquals(expectedResponse.getWeightLimit(), actualResponse.getWeightLimit());
+    assertEquals(expectedResponse.getId(), actualResponse.getId());
+    assertEquals(expectedResponse.getState(), actualResponse.getState());
+
+    verify(droneRepository, times(1)).existsBySerialNumber(request.getSerialNumber());
+    verify(droneRepository, times(1)).save(drone);
+    verify(droneMapper, times(1)).toDrone(request);
+    verify(droneMapper, times(1)).toDroneResponse(drone);
+  }
+
+  @Test
+  void registerDrone_ShouldThrowException_WhenSerialNumberAlreadyExists() {
+    // Arrange
+    RegisterDroneRequest request = new RegisterDroneRequest();
+    request.setBatteryCapacity(60);
+    request.setModel(DroneModel.LIGHTWEIGHT);
+    request.setSerialNumber("0001234");
+    request.setWeightLimit(400.6);
+
+    when(droneRepository.existsBySerialNumber(request.getSerialNumber())).thenReturn(true);
+
+    // Act & Assert
+    assertThrows(
+        ExceptionOf.Business.BadRequest.BAD_REQUEST.exception().getClass(),
+        () -> droneService.registerDrone(request));
+
+    verify(droneRepository, times(1)).existsBySerialNumber(request.getSerialNumber());
+    verify(droneRepository, never()).save(any());
   }
 }
