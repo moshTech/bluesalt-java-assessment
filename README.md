@@ -77,3 +77,7 @@ This will start a **Testcontainer**, run the integration tests, and shut down th
 | `GET` | `api/v1/drone/loaded/{id}`    | Get loading/loaded drone by id      |
 
 ---
+
+## 📄 Swagger doc url
+
+http://localhost:8083/swagger-ui/index.html
