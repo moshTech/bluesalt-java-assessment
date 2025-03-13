@@ -10,7 +10,6 @@ import lombok.Setter;
  * @role software engineer
  * @createdOn 13 Thu Mar, 2025
  */
-
 @Getter
 @Setter
 public class DroneResponse extends BaseResponse {
