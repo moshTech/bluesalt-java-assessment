@@ -54,7 +54,6 @@
             <column name="weight" value="100.0"/>
             <column name="code" value="PARA_001"/>
             <column name="image" value="paracetamol.jpg"/>
-            <column name="drone_id" value="01JP35B7KQY38WN8HQDYQC95A2"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="deleted" valueBoolean="false"/>
@@ -66,7 +65,6 @@
             <column name="weight" value="150.0"/>
             <column name="code" value="IBU_002"/>
             <column name="image" value="ibuprofen.jpg"/>
-            <column name="drone_id" value="01JP35B7KVYJCY4AQD0WCPMTV8"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="deleted" valueBoolean="false"/>

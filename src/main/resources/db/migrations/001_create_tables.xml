@@ -56,11 +56,6 @@
             <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
             <column name="deleted" type="boolean" defaultValueBoolean="false"/>
 
-            <!-- Foreign Key: Medication is assigned to a Drone -->
-            <column name="drone_id" type="VARCHAR(26)">
-                <constraints nullable="false" foreignKeyName="fk_medication_drone"
-                             references="drone(id)"/>
-            </column>
         </createTable>
 
         <!-- Add Unique Constraint -->

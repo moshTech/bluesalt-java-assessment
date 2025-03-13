@@ -47,6 +47,6 @@ public class Drone extends BaseEntity {
   @NotNull @Convert(converter = DroneStateConverter.class)
   private DroneState state;
 
-  @OneToMany(mappedBy = "drone", cascade = CascadeType.ALL)
+  @OneToMany
   private List<Medication> medications;
 }

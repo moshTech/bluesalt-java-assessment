@@ -36,8 +36,4 @@ public class Medication extends BaseEntity {
   private String code;
 
   private String image;
-
-  @ManyToOne
-  @JoinColumn(name = "drone_id")
-  private Drone drone;
 }
