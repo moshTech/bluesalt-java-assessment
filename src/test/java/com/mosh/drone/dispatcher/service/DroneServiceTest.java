@@ -92,7 +92,7 @@ public class DroneServiceTest {
     Page<Drone> dronePage = new PageImpl<>(droneList, pageable, droneList.size());
 
     when(droneRepository.findByStateAndBatteryCapacityGreaterThanEqual(
-            DroneState.IDLE, 30, pageable))
+            DroneState.IDLE, 25, pageable))
         .thenReturn(dronePage);
     when(droneMapper.toDroneResponse(drone1)).thenReturn(droneResponse1);
     when(droneMapper.toDroneResponse(drone2)).thenReturn(droneResponse2);
@@ -113,7 +113,7 @@ public class DroneServiceTest {
     assertEquals(70, result.getContent().get(1).getBatteryCapacity());
 
     verify(droneRepository, times(1))
-        .findByStateAndBatteryCapacityGreaterThanEqual(DroneState.IDLE, 30, pageable);
+        .findByStateAndBatteryCapacityGreaterThanEqual(DroneState.IDLE, 25, pageable);
     verify(droneMapper, times(2)).toDroneResponse(any(Drone.class));
   }
 

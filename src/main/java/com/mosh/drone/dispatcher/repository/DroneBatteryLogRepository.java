@@ -9,7 +9,5 @@ import org.springframework.stereotype.Repository;
  * @role software engineer
  * @createdOn 13 Thu Mar, 2025
  */
-
 @Repository
-public interface DroneBatteryLogRepository extends JpaRepository<DroneBatteryLog, String> {
-}
+public interface DroneBatteryLogRepository extends JpaRepository<DroneBatteryLog, String> {}

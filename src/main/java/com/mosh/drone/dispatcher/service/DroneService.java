@@ -9,6 +9,7 @@ import com.mosh.drone.dispatcher.model.request.RegisterDroneRequest;
 import com.mosh.drone.dispatcher.model.response.DroneResponse;
 import com.mosh.drone.dispatcher.model.response.GenericMessageResponse;
 import com.mosh.drone.dispatcher.repository.DroneRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,8 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * @author mosh
@@ -44,8 +43,13 @@ public class DroneService {
 
   public DroneResponse getLoadedDroneWithMedications(String id) {
 
-    Drone drone = droneRepository.findByIdAndStateIn(id, List.of(DroneState.LOADING, DroneState.LOADED))
-            .orElseThrow(() -> ExceptionOf.Business.NotFound.NOT_FOUND.exception("Drone not found in loading/loaded state"));
+    Drone drone =
+        droneRepository
+            .findByIdAndStateIn(id, List.of(DroneState.LOADING, DroneState.LOADED))
+            .orElseThrow(
+                () ->
+                    ExceptionOf.Business.NotFound.NOT_FOUND.exception(
+                        "Drone not found in loading/loaded state"));
 
     return droneMapper.toDroneResponseWithMedication(drone);
   }
@@ -59,8 +63,8 @@ public class DroneService {
             .getBatteryCapacity();
 
     return GenericMessageResponse.builder()
-                    .message(String.valueOf(batteryCapacity).concat(" %"))
-    .build();
+        .message(String.valueOf(batteryCapacity).concat(" %"))
+        .build();
   }
 
   public DroneResponse registerDrone(RegisterDroneRequest request) {
@@ -73,15 +77,18 @@ public class DroneService {
     return droneMapper.toDroneResponse(droneRepository.save(droneMapper.toDrone(request)));
   }
 
-
   public void loadDrone(String droneId, List<Medication> medications) {
-    Drone drone = droneRepository.findById(droneId)
-            .orElseThrow(() -> ExceptionOf.Business.NotFound.NOT_FOUND.exception("Drone not found"));
+    Drone drone =
+        droneRepository
+            .findById(droneId)
+            .orElseThrow(
+                () -> ExceptionOf.Business.NotFound.NOT_FOUND.exception("Drone not found"));
 
     double totalWeight = medications.stream().mapToDouble(Medication::getWeight).sum();
 
     if (totalWeight > drone.getWeightLimit()) {
-      throw  ExceptionOf.Business.BadRequest.BAD_REQUEST.exception("Total weight exceeds drone's limit.");
+      throw ExceptionOf.Business.BadRequest.BAD_REQUEST.exception(
+          "Total weight exceeds drone's limit.");
     }
 
     if (drone.getBatteryCapacity() < 25) {

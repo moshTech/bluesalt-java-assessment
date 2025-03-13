@@ -57,14 +57,16 @@ public class DroneController {
 
   @PostMapping("/{id}/load")
   @Operation(summary = "Load drone with medication", description = "To load drone with medication")
-  public GenericMessageResponse loadDrone(@PathVariable String id, @RequestBody LoadDroneRequest request) {
+  public GenericMessageResponse loadDrone(
+      @PathVariable String id, @RequestBody LoadDroneRequest request) {
     return droneFacade.loadDrone(id, request);
   }
 
   @GetMapping("/loaded/{id}")
-  @Operation(summary = "Get loaded drone by id", description = "To fetch loaded drone by id with its medications")
-  public DroneResponse getLoadedDroneById(
-          @PathVariable String id) {
+  @Operation(
+      summary = "Get loaded drone by id",
+      description = "To fetch loaded drone by id with its medications")
+  public DroneResponse getLoadedDroneById(@PathVariable String id) {
     return droneService.getLoadedDroneWithMedications(id);
   }
 }

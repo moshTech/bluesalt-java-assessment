@@ -15,7 +15,6 @@ import org.hibernate.annotations.Where;
  * @role software engineer
  * @createdOn 13 Thu Mar, 2025
  */
-
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
@@ -25,9 +24,9 @@ import org.hibernate.annotations.Where;
 @Where(clause = "deleted = false")
 @SQLDelete(sql = "update battery_log set deleted = true where id=?")
 @Builder
-public class DroneBatteryLog extends BaseEntity{
+public class DroneBatteryLog extends BaseEntity {
 
-    private String droneId;
+  private String droneId;
 
-    private int batteryLevel;
+  private int batteryLevel;
 }

@@ -1,10 +1,9 @@
 package com.mosh.drone.dispatcher.repository;
 
 import com.mosh.drone.dispatcher.model.entity.Medication;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * @author mosh
@@ -14,5 +13,5 @@ import java.util.List;
 @Repository
 public interface MedicationRepository extends JpaRepository<Medication, String> {
 
-    List<Medication> findByIdIn(List<String> ids);
+  List<Medication> findByIdIn(List<String> ids);
 }

@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mosh.drone.dispatcher.model.entity.Medication;
 import com.mosh.drone.dispatcher.model.enumeration.DroneModel;
 import com.mosh.drone.dispatcher.model.enumeration.DroneState;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 /**
  * @author mosh

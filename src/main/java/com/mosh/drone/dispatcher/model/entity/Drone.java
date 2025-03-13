@@ -5,7 +5,6 @@ import com.mosh.drone.dispatcher.model.entity.converter.enumeration.DroneModelCo
 import com.mosh.drone.dispatcher.model.entity.converter.enumeration.DroneStateConverter;
 import com.mosh.drone.dispatcher.model.enumeration.DroneModel;
 import com.mosh.drone.dispatcher.model.enumeration.DroneState;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -47,6 +46,5 @@ public class Drone extends BaseEntity {
   @NotNull @Convert(converter = DroneStateConverter.class)
   private DroneState state;
 
-  @OneToMany
-  private List<Medication> medications;
+  @OneToMany private List<Medication> medications;
 }
