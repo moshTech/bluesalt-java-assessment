@@ -1,0 +1,65 @@
+### This is the root configuration file for the application. Other configuration files are loaded based on the active profile. ###
+server:
+  port: 8083
+  tomcat:
+    threads:
+      max: 200
+  max-http-request-header-size: 100MB
+  forward-headers-strategy: framework
+spring:
+  profiles:
+    active: local
+  cloud:
+    config:
+      import-check:
+        enabled: false
+  config:
+    import: 'optional:configserver:'
+  datasource: # (Credentials are in other properties file based on the active profile)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-test-query: SELECT 1
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+        show_sql: true
+        format-sql: true
+        physical_naming_strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+#    change-log: file:db/changelog/db.changelog-master.xml
+    enabled: true
+  main:
+    banner-mode: 'off'
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+management:
+  endpoints:
+    web:
+      base-path: /
+  endpoint:
+    health:
+  health:
+    redis:
+      enabled: false
+    rabbit:
+      enabled: false
+    jms:
+      enabled: false
+
+swagger:
+  title: Drone dispatcher API
+  server:
+    url: http://localhost:8083
