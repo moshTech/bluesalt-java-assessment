@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Insert DRONE Data -->
+    <changeSet id="202503130400-001-insert-drones" author="mosh">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="drone"/>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM drone WHERE serial_number = 'DRONE001'
+                </sqlCheck>
+        </preConditions>
+        <insert tableName="drone">
+            <column name="id" value="01JP35B7KQY38WN8HQDYQC95A2"/>
+            <column name="serial_number" value="DRONE001"/>
+            <column name="model" value="LIGHTWEIGHT"/>
+            <column name="weight_limit" value="300.5"/>
+            <column name="battery_capacity" value="100"/>
+            <column name="state" value="IDLE"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="deleted" valueBoolean="false"/>
+        </insert>
+
+        <insert tableName="drone">
+            <column name="id" value="01JP35B7KVYJCY4AQD0WCPMTV8"/>
+            <column name="serial_number" value="DRONE002"/>
+            <column name="model" value="MIDDLEWEIGHT"/>
+            <column name="weight_limit" value="499.9"/>
+            <column name="battery_capacity" value="80"/>
+            <column name="state" value="LOADING"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="deleted" valueBoolean="false"/>
+        </insert>
+    </changeSet>
+
+
+    <!-- Insert MEDICATION Data -->
+    <changeSet id="202503130400-002-insert-medications" author="mosh">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="medication"/>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM medication WHERE code = 'PARA_001'
+                </sqlCheck>
+        </preConditions>
+
+        <insert tableName="medication">
+            <column name="id" value="01JP35B7KVYJCY4AQD0WCPMTVA"/>
+            <column name="name" value="Paracetamol"/>
+            <column name="weight" value="100.0"/>
+            <column name="code" value="PARA_001"/>
+            <column name="image" value="paracetamol.jpg"/>
+            <column name="drone_id" value="01JP35B7KQY38WN8HQDYQC95A2"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="deleted" valueBoolean="false"/>
+        </insert>
+
+        <insert tableName="medication">
+            <column name="id" value="01JP35B7KVYJCY4AQD0WCPMTVC"/>
+            <column name="name" value="Ibuprofen"/>
+            <column name="weight" value="150.0"/>
+            <column name="code" value="IBU_002"/>
+            <column name="image" value="ibuprofen.jpg"/>
+            <column name="drone_id" value="01JP35B7KVYJCY4AQD0WCPMTV8"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="deleted" valueBoolean="false"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
