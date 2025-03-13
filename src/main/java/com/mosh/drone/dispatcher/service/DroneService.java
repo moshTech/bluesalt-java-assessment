@@ -4,6 +4,7 @@ import com.mosh.drone.dispatcher.exception.ExceptionOf;
 import com.mosh.drone.dispatcher.mapper.DroneMapper;
 import com.mosh.drone.dispatcher.model.enumeration.DroneState;
 import com.mosh.drone.dispatcher.model.response.DroneResponse;
+import com.mosh.drone.dispatcher.model.response.GenericMessageResponse;
 import com.mosh.drone.dispatcher.repository.DroneRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,10 +37,16 @@ public class DroneService {
         .map(droneMapper::toDroneResponse);
   }
 
-  public int getDroneBattery(String droneId) {
-    return droneRepository
+  public GenericMessageResponse getDroneBatteryCapacity(String droneId) {
+
+    var genericMessageResponse = new GenericMessageResponse();
+    int  bateryCapacity = droneRepository
         .findById(droneId)
         .orElseThrow(() -> ExceptionOf.Business.NotFound.NOT_FOUND.exception("Drone not found"))
         .getBatteryCapacity();
+
+    genericMessageResponse.setMessage(String.valueOf(bateryCapacity).concat(" %"));
+
+    return genericMessageResponse;
   }
 }
